@@ -1,4 +1,4 @@
-package com.distributed.sort.distributedsort;
+package com.distributed.sort.distributedsort.models;
 
 public class RandomNumber {
 	
