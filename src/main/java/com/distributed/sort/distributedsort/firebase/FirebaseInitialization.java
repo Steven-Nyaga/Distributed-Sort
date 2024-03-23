@@ -13,7 +13,7 @@ import com.google.firebase.FirebaseOptions;
 @Service
 public class FirebaseInitialization {
 
-	public void initialization() {
+	public void initialization() { 
 
 		try {
 			FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
