@@ -1,7 +1,6 @@
 package com.distributed.sort.distributedsort.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -18,34 +17,41 @@ import com.google.firebase.cloud.FirestoreClient;
 @Service
 public class RandomNumberService {
 
-	public void addNewNumbers(int newNumber) {
+	public void addNewNumbers(RandomNumber newNumber) {
 		Firestore db = FirestoreClient.getFirestore();
 
 		// Retrieve existing numbers from Firestore
 		List<RandomNumber> existingNumbers = getAllNumbersFromFirestore(db);
 
-		// Create a PriorityQueue with existing numbers
-		PriorityQueue<Integer> priorityQueue = new PriorityQueue<>(Collections.reverseOrder());
+		// Add new number to existing numbers
+		existingNumbers.add(newNumber);
 
-		// priorityQueue.addAll(existingNumbers);
-		for (RandomNumber num : existingNumbers) {
-			priorityQueue.add(num.getRandomNumber());
-		}
+		// Sort the numbers in descending order
+		List<RandomNumber> sortedNumbers = sortNumbers(existingNumbers);
 
-		// Add new numbers to the PriorityQueue
-		priorityQueue.add(newNumber);
+		// Update Firestore with the sorted numbers
+		updateFirestoreWithSortedNumbers(db, sortedNumbers);
+	}
+
+	private List<RandomNumber> sortNumbers(List<RandomNumber> existingNumbers) {
+
+		// Create a PriorityQueue (MaxHeap) with existing numbers
+		PriorityQueue<RandomNumber> priorityQueue = new PriorityQueue<>(
+				(a, b) -> b.getRandomNumber() - a.getRandomNumber());
+
+		// Add existing numbers to the PriorityQueue
+		priorityQueue.addAll(existingNumbers);
 
 		// Convert the PriorityQueue back to a list
 		List<RandomNumber> sortedNumbers = new ArrayList<>();
 		while (!priorityQueue.isEmpty()) {
-			int val = priorityQueue.poll();
-			RandomNumber randomNumber = new RandomNumber();
-			randomNumber.setRandomNumber(val);
+			// sortedNumbers.add(priorityQueue.poll());
+			RandomNumber randomNumber = priorityQueue.poll();
+			System.out.print("From the Queue: " + randomNumber.getRandomNumber() + ", ");
 			sortedNumbers.add(randomNumber);
 		}
 
-		// Update Firestore with the sorted numbers
-		updateFirestoreWithSortedNumbers(db, sortedNumbers);
+		return sortedNumbers;
 	}
 
 	private void updateFirestoreWithSortedNumbers(Firestore db, List<RandomNumber> sortedNumbers) {
@@ -59,7 +65,7 @@ public class RandomNumberService {
 				db.collection("distributed_sort").add(randomNumber);
 			}
 		} catch (Exception e) {
-			e.printStackTrace(); 
+			e.printStackTrace();
 		}
 
 	}

@@ -18,7 +18,7 @@ public class RandomNumberController {
 	public String saveValue(@RequestBody RandomNumber randomNumber) {
 		try {
 			
-			randomNumberService.addNewNumbers(randomNumber.getRandomNumber());
+			randomNumberService.addNewNumbers(randomNumber);
 			return "Success -> Check DB";
 			
 		} catch (Exception e) {
