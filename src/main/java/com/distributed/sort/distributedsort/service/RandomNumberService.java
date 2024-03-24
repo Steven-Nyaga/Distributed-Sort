@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.distributed.sort.distributedsort.models.RandomNumber;
 import com.google.api.core.ApiFuture;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
@@ -45,10 +46,7 @@ public class RandomNumberService {
 		// Convert the PriorityQueue back to a list
 		List<RandomNumber> sortedNumbers = new ArrayList<>();
 		while (!priorityQueue.isEmpty()) {
-			// sortedNumbers.add(priorityQueue.poll());
-			RandomNumber randomNumber = priorityQueue.poll();
-			System.out.print("From the Queue: " + randomNumber.getRandomNumber() + ", ");
-			sortedNumbers.add(randomNumber);
+			sortedNumbers.add(priorityQueue.poll());
 		}
 
 		return sortedNumbers;
@@ -62,6 +60,7 @@ public class RandomNumberService {
 
 			// Add new sorted numbers
 			for (RandomNumber randomNumber : sortedNumbers) {
+				randomNumber.setTimestamp(Timestamp.now());
 				db.collection("distributed_sort").add(randomNumber);
 			}
 		} catch (Exception e) {
