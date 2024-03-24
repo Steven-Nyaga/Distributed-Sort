@@ -2,14 +2,10 @@ package com.distributed.sort.distributedsort.models;
 
 public class RandomNumber {
 	
-	private int Id;
 	private int randomNumber;
-	
-	public int getId() {
-		return Id;
-	}
-	public void setId(int id) {
-		Id = id;
+		
+	public RandomNumber() {
+
 	}
 	public int getRandomNumber() {
 		return randomNumber;
