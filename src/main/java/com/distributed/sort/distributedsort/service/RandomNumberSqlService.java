@@ -1,5 +1,8 @@
 package com.distributed.sort.distributedsort.service;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,12 +19,30 @@ public class RandomNumberSqlService {
 		super();
 		this.repository = repository;
 	}
-
-	public void addNewNumbers(RandomNumber newNumber) {
-		
-	}
 	
 	public Page<RandomNumber> getAllData(Pageable pageable) {
         return repository.findAll(pageable);
+    }
+
+	public void addAndSortRandomNumber(int randomNumber) {
+		// Add the new random number to the database
+        RandomNumber newRandomNumber = new RandomNumber();
+        newRandomNumber.setRandomNumber(randomNumber);
+        repository.save(newRandomNumber);
+        
+     // Retrieve all random numbers, sort them, and refill the database
+        List<RandomNumber> sortedRandomNumbers = getAllRandomNumbersSortedDesc();
+        refillDatabase(sortedRandomNumbers);
+	}
+	
+	public List<RandomNumber> getAllRandomNumbersSortedDesc() {
+        List<RandomNumber> randomNumbers = repository.findAll();
+        Collections.sort(randomNumbers, (a, b) -> b.getRandomNumber() - a.getRandomNumber());
+        return randomNumbers;
+    }
+
+    public void refillDatabase(List<RandomNumber> sortedRandomNumbers) {
+    	repository.deleteAll();
+    	repository.saveAll(sortedRandomNumbers);
     }
 }

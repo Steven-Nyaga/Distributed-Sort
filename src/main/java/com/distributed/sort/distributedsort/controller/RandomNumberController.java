@@ -23,7 +23,7 @@ public class RandomNumberController {
 	public String saveValue(@RequestBody RandomNumber randomNumber) {
 		try {
 			
-			
+			randomNumberSqlService.addAndSortRandomNumber(randomNumber.getRandomNumber());
 			return "Success -> Check DB";
 			
 		} catch (Exception e) {
@@ -36,8 +36,17 @@ public class RandomNumberController {
     @GetMapping("/data")
     public Page<RandomNumber> getAllData(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "50") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return randomNumberSqlService.getAllData(pageable);
+    	
+        try {
+        	
+			Pageable pageable = PageRequest.of(page, size);
+			return randomNumberSqlService.getAllData(pageable);
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			return null;
+		}
     }
 	
 }
