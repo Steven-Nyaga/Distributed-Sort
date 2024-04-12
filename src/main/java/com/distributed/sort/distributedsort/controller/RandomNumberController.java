@@ -1,5 +1,6 @@
 package com.distributed.sort.distributedsort.controller;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,14 +17,21 @@ import com.distributed.sort.distributedsort.service.RandomNumberSqlService;
 @RestController
 public class RandomNumberController {
 	
+	private final RabbitTemplate rabbitTemplate;
+	
 	@Autowired
 	RandomNumberSqlService randomNumberSqlService;
 	
+	public RandomNumberController(RabbitTemplate rabbitTemplate) {
+		super();
+		this.rabbitTemplate = rabbitTemplate;
+	}
+
 	@PostMapping("/distributed-sort")
 	public String saveValue(@RequestBody RandomNumber randomNumber) {
 		try {
-			
-			randomNumberSqlService.addAndSortRandomNumber(randomNumber.getRandomNumber());
+			// randomNumberSqlService.addAndSortRandomNumber(randomNumber.getRandomNumber());
+			rabbitTemplate.convertAndSend("", "random-number", randomNumber);
 			return "Success -> Check DB";
 			
 		} catch (Exception e) {
