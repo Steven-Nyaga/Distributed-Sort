@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.distributed.sort.distributedsort.models.NumberRequestBody;
 import com.distributed.sort.distributedsort.models.RandomNumber;
 import com.distributed.sort.distributedsort.service.RandomNumberSqlService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 public class RandomNumberController {
@@ -28,14 +30,15 @@ public class RandomNumberController {
 	}
 
 	@PostMapping("/distributed-sort")
-	public String saveValue(@RequestBody RandomNumber randomNumber) {
+	public String saveValue(@RequestBody NumberRequestBody requestBody) {
 		try {
-			// randomNumberSqlService.addAndSortRandomNumber(randomNumber.getRandomNumber());
-			rabbitTemplate.convertAndSend("", "random-number", randomNumber);
+			
+			randomNumberSqlService.randomNumberGenerator(requestBody.getRandomNumberCount());
+			// ObjectMapper objectMapper = new ObjectMapper();
+			// String json = objectMapper.writeValueAsString(randomNumber);
+			// rabbitTemplate.convertAndSend("", "random-number", json);
 			return "Success -> Check DB";
-			
 		} catch (Exception e) {
-			
 			System.out.println(e);
 			return "Error";
 		}
