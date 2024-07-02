@@ -25,17 +25,39 @@ public class RandomNumberSqlService {
 	public Page<RandomNumber> getAllData(Pageable pageable) {
 		return repository.findAll(pageable);
 	}
-
-	public void randomNumberGenerator(int numberesToGenerate) {
+	
+	public List<Integer> randomNumberGenerator(int numberesToGenerate) {
 		Random random = new Random();
 		List<Integer> randomNumbers = new ArrayList<>();
 		for (int i = 1; i <= numberesToGenerate; i++) {
 			// Obtain a number between [0 - 10000].
-			randomNumbers.add(random.nextInt(10001));
+			randomNumbers.add(random.nextInt(1000001));
 		}
 		
-		addAndSortRandomNumber(randomNumbers);
+		Collections.sort(randomNumbers, Collections.reverseOrder());
+		
+		for (int i : randomNumbers) {
+			System.out.println("################ Numbers: " + i);
+		}
+		
+		return randomNumbers;
 	}
+
+//	public List<Integer> randomNumberGenerator(int numberesToGenerate) {
+//		Random random = new Random();
+//		List<Integer> randomNumbers = new ArrayList<>();
+//		for (int i = 1; i <= numberesToGenerate; i++) {
+//			// Obtain a number between [0 - 100].
+//			randomNumbers.add(random.nextInt(100));
+//		}
+//		
+//		addAndSortRandomNumber(randomNumbers);
+//		
+//		
+//		Collections.sort(randomNumbers, Collections.reverseOrder());
+//		
+//		return randomNumbers;
+//	}
 
 	public void addAndSortRandomNumber(List<Integer> randomNumbers) {
 		// Retrieve all random numbers, sort them, and refill the database
